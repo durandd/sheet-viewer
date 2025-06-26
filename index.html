@@ -1,31 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Sheet Data Viewer</title>
-</head>
-<body>
-  <h1>Live Sheet Data</h1>
-  <div id="data"></div>
+<script>
+  const SHEET_API = "https://script.google.com/macros/s/AKfycbxwo_lfCGvPK_-Z9phzEAlvnBLXz9qcaYcuBz-dJ-aphOPGAuY-PjjPxAyx5TLj3O0/exec";
 
-  <script>
-    const SHEET_API = "https://script.google.com/macros/s/AKfycbxwo_lfCGvPK_-Z9phzEAlvnBLXz9qcaYcuBz-dJ-aphOPGAuY-PjjPxAyx5TLj3O0/exec";
+  async function fetchData() {
+    const response = await fetch(SHEET_API);
+    const data = await response.json();
 
-    async function fetchData() {
-      const response = await fetch(SHEET_API);
-      const data = await response.json();
+    const container = document.getElementById('data');
+    container.innerHTML = '';
 
-      const container = document.getElementById('data');
-      container.innerHTML = '';
-
-      data.forEach(row => {
-        const rowEl = document.createElement('div');
-        rowEl.textContent = JSON.stringify(row);
-        container.appendChild(rowEl);
-      });
+    if (data.length === 0) {
+      container.textContent = 'No data available.';
+      return;
     }
 
-    fetchData();
-    setInterval(fetchData, 10000); // Refresh every 10 seconds
-  </script>
-</body>
-</html>
+    const table = document.createElement('table');
+    table.border = 1;
+
+    // Create table headers
+    const headers = Object.keys(data[0]);
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    headers.forEach(header => {
+      const th = document.createElement('th');
+      th.textContent = header;
+      headerRow.appendChild(th);
+    });
+
+    // Create table body
+    const tbody = table.createTBody();
+    data.forEach(row => {
+      const tr = tbody.insertRow();
+      headers.forEach(key => {
+        const td = tr.insertCell();
+        td.textContent = row[key];
+      });
+    });
+
+    container.appendChild(table);
+  }
+
+  fetchData();
+  setInterval(fetchData, 10000); // Refresh every 10 seconds
+</script>
