@@ -1,44 +1,57 @@
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const SHEET_API = "https://script.google.com/macros/s/AKfycbxwo_lfCGvPK_-Z9phzEAlvnBLXz9qcaYcuBz-dJ-aphOPGAuY-PjjPxAyx5TLj3O0/exec";
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sheet Data Viewer</title>
+</head>
+<body>
+  <h1>Live Sheet Data</h1>
+  <div id="data"></div>
 
-    async function fetchData() {
-      const response = await fetch(SHEET_API);
-      const data = await response.json();
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const SHEET_API = "https://script.google.com/macros/s/AKfycbxwo_lfCGvPK_-Z9phzEAlvnBLXz9qcaYcuBz-dJ-aphOPGAuY-PjjPxAyx5TLj3O0/exec";
 
-      const container = document.getElementById('data');
-      container.innerHTML = '';
+        async function fetchData() {
+        const response = await fetch(SHEET_API);
+        const data = await response.json();
 
-      if (data.length === 0) {
-        container.textContent = 'No data available.';
-        return;
-      }
+        const container = document.getElementById('data');
+        container.innerHTML = '';
 
-      const table = document.createElement('table');
-      table.border = 1;
+        if (data.length === 0) {
+            container.textContent = 'No data available.';
+            return;
+        }
 
-      const headers = Object.keys(data[0]);
-      const thead = table.createTHead();
-      const headerRow = thead.insertRow();
-      headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
-      });
+        const table = document.createElement('table');
+        table.border = 1;
 
-      const tbody = table.createTBody();
-      data.forEach(row => {
-        const tr = tbody.insertRow();
-        headers.forEach(key => {
-          const td = tr.insertCell();
-          td.textContent = row[key];
+        const headers = Object.keys(data[0]);
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
         });
-      });
 
-      container.appendChild(table);
-    }
+        const tbody = table.createTBody();
+        data.forEach(row => {
+            const tr = tbody.insertRow();
+            headers.forEach(key => {
+            const td = tr.insertCell();
+            td.textContent = row[key];
+            });
+        });
 
-    fetchData();
-    setInterval(fetchData, 10000); // Refresh every 10 seconds
-  });
-</script>
+        container.appendChild(table);
+        }
+
+        fetchData();
+        setInterval(fetchData, 10000); // Refresh every 10 seconds
+    });
+    </script>
+
+
+</body>
+</html>
